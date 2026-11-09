@@ -41,13 +41,16 @@
 - The displayed academic year is the next calendar year; class names and
   capacities are configured through the UI. The database starts empty.
 - The revised visual palette is deep blue `rgb(11, 58, 99)` and fog white
-  `rgb(228, 232, 237)`. The requested orange `rgb(255, 145, 0)` is reserved and
-  deliberately unused pending the user's direction. Schoolgate is the portal name.
+  `rgb(228, 232, 237)`. Orange `rgb(255, 145, 0)` is applied to the user-selected
+  outlines, icons, labels, guide digits, and graduation ribbon. Schoolgate is the portal name.
 - The school is a generated, transparent paper-cut illustration based on the
   user's architectural reference. Weather is a separate presentation layer:
   Morning places the sun on the right with clouds; Day places it above the school
   and hides both clouds. The two hero controls share the class filter's state.
   All shifts defaults to the morning scene while showing every class.
+- The School sign and clearer analog clock are SVG facade details aligned to
+  the original image's coordinate system, so they scale with the building.
+  Buttons use pill shapes, and tablet hero controls share the same width/alignment.
 - Browser tests are an optional assignment feature included in this TDD workflow.
   Two-process deployment is not required for the core submission. The locking
   design has no in-memory coordination requirement, but multi-process and Docker

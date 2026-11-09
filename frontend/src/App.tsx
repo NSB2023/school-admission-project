@@ -1,12 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import {
-  ArrowRight,
-  ArrowUpRight,
   BookOpen,
   Check,
   CheckCircle2,
-  ChevronRight,
   CircleHelp,
   Clock3,
   FileText,
@@ -24,6 +21,7 @@ import {
 import { api } from "./api";
 import type { Hold, SchoolClass } from "./api";
 import LandingHero from "./LandingHero";
+import PaperPlane from "./PaperPlane";
 import "./styles.css";
 
 function storedIdentity() {
@@ -271,7 +269,7 @@ export default function App() {
       >
         <LayoutGrid size={19} />
         Available classes
-        <ChevronRight size={15} className="nav-arrow" />
+        <PaperPlane size={15} className="nav-arrow" />
       </button>
       <button
         className={view === "applications" ? "nav-item active" : "nav-item"}
@@ -286,7 +284,7 @@ export default function App() {
       <button className="nav-item" onClick={() => setModal("guide")}>
         <CircleHelp size={19} />
         How it works
-        <ArrowUpRight size={15} className="nav-arrow" />
+        <PaperPlane size={15} className="nav-arrow" />
       </button>
     </>
   );
@@ -420,7 +418,7 @@ export default function App() {
                   <BookOpen size={23} />
                 </span>
                 <div>
-                  <span className="stat-label">Ways to begin</span>
+                  <span className="stat-label accent">Ways to begin</span>
                   <strong>
                     {loading ? "—" : String(classes.length).padStart(2, "0")}
                   </strong>
@@ -432,7 +430,9 @@ export default function App() {
                   <Users size={23} />
                 </span>
                 <div>
-                  <span className="stat-label">Places for possibility</span>
+                  <span className="stat-label accent">
+                    Places for possibility
+                  </span>
                   <strong>
                     {loading ? "—" : totals.available}
                     <small> / {totals.seats}</small>
@@ -456,7 +456,7 @@ export default function App() {
                     {valid ? String(holds.length).padStart(2, "0") : "—"}
                   </strong>
                 </div>
-                <ArrowUpRight size={20} className="stat-arrow" />
+                <PaperPlane size={20} className="stat-arrow" />
               </button>
             </section>
 
@@ -593,7 +593,11 @@ export default function App() {
                 )
               ) : !valid ? (
                 <Empty
-                  title="Your journey belongs here"
+                  title={
+                    <>
+                      Your journey <span className="accent">belongs here</span>
+                    </>
+                  }
                   text="Enter your 17-digit birth registration number above to find your applications."
                   action={
                     <button
@@ -601,7 +605,7 @@ export default function App() {
                       onClick={() => identityInput.current?.focus()}
                     >
                       Enter registration number
-                      <ArrowUpRight size={16} />
+                      <PaperPlane size={16} />
                     </button>
                   }
                 />
@@ -626,7 +630,7 @@ export default function App() {
                       onClick={() => setView("classes")}
                     >
                       Explore classes
-                      <ArrowRight size={16} />
+                      <PaperPlane size={16} />
                     </button>
                   }
                 />
@@ -640,7 +644,7 @@ export default function App() {
               </span>
               <button onClick={() => setModal("guide")}>
                 How admissions work
-                <ArrowUpRight size={13} />
+                <PaperPlane size={13} />
               </button>
             </footer>
           </div>
@@ -697,7 +701,9 @@ export default function App() {
           </p>
           <ol className="guide-steps">
             <li>
-              <b>01</b>
+              <b>
+                0<span className="accent">1</span>
+              </b>
               <div>
                 <h3>Make it yours</h3>
                 <p>
@@ -707,7 +713,9 @@ export default function App() {
               </div>
             </li>
             <li>
-              <b>02</b>
+              <b>
+                0<span className="accent">2</span>
+              </b>
               <div>
                 <h3>Find your classroom</h3>
                 <p>
@@ -717,7 +725,9 @@ export default function App() {
               </div>
             </li>
             <li>
-              <b>03</b>
+              <b>
+                0<span className="accent">3</span>
+              </b>
               <div>
                 <h3>Take the next step</h3>
                 <p>
@@ -735,7 +745,7 @@ export default function App() {
           </div>
           <button className="button" onClick={() => setModal(null)}>
             I'm ready to begin
-            <ArrowRight size={17} />
+            <PaperPlane size={17} />
           </button>
         </Dialog>
       )}
@@ -795,7 +805,7 @@ export default function App() {
                 onClick={() => changeHold(selectedHold, true)}
               >
                 {pending ? "Processing…" : "Pay admission fee"}
-                <ArrowRight size={17} />
+                <PaperPlane size={17} />
               </button>
               <button
                 className="cancel-button"
@@ -824,7 +834,7 @@ export default function App() {
                 {selectedStatus === "CONFIRMED"
                   ? "View my applications"
                   : "Explore available classes"}
-                <ArrowRight size={17} />
+                <PaperPlane size={17} />
               </button>
             </>
           )}
@@ -855,7 +865,7 @@ function ClassCard({
       <div className="card-top">
         <span className="class-icon class-stamp">
           <small>{grade ? "CLASS" : "SCHOOL"}</small>
-          <b>{grade || "↗"}</b>
+          <b>{grade || <PaperPlane size={38} />}</b>
         </span>
         <span
           className={`availability-badge ${c.availableSeats === 0 ? "full" : c.availableSeats <= 10 ? "limited" : ""}`}
@@ -932,7 +942,7 @@ function ClassCard({
             : c.availableSeats === 0
               ? "No seats available"
               : "Apply now"}
-          <ArrowRight size={16} />
+          <PaperPlane size={16} />
         </button>
       </div>
     </article>
@@ -978,7 +988,7 @@ function ApplicationCard({
       </p>
       <button className="button button-outline" onClick={onView}>
         {status === "HELD" ? "Complete admission" : "View application"}
-        <ArrowRight size={16} />
+        <PaperPlane size={16} />
       </button>
     </article>
   );
@@ -989,7 +999,7 @@ function Empty({
   text,
   action,
 }: {
-  title: string;
+  title: ReactNode;
   text: string;
   action: ReactNode;
 }) {

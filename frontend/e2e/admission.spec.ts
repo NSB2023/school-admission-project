@@ -243,3 +243,21 @@ test("desktop headline sits beside the school rather than covering it", async ({
   expect(heading!.x + heading!.width).toBeLessThanOrEqual(school!.x + 30);
   expect(heading!.y).toBeLessThan(school!.y + school!.height);
 });
+
+test("hero action and shift buttons align at tablet width", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 900, height: 1050 });
+  await page.goto("/");
+  const action = (await page
+    .getByRole("button", { name: "Find your place", exact: true })
+    .boundingBox())!;
+  const group = page.getByRole("group", { name: "Choose your shift" });
+  for (const name of ["Morning shift", "Day shift"]) {
+    const shift = (await group
+      .getByRole("button", { name, exact: true })
+      .boundingBox())!;
+    expect(Math.abs(shift.x - action.x)).toBeLessThan(1);
+    expect(Math.abs(shift.width - action.width)).toBeLessThan(1);
+  }
+});

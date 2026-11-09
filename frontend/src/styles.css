@@ -21,6 +21,7 @@
   --ink: rgb(11, 58, 99);
   --muted: #526e86;
   --line: #0b3a632b;
+  --orange: rgb(255, 145, 0);
 }
 * {
   box-sizing: border-box;
@@ -103,7 +104,7 @@ a:focus-visible {
       rgba(228, 232, 237, 0.35) 83%,
       transparent 100%
     ),
-    linear-gradient(180deg, #0b3a63 1000px, #e4e8ed 1950px, #e4e8ed 100%);
+    var(--blue);
 }
 .app-shell::before {
   content: "";
@@ -207,7 +208,7 @@ a:focus-visible {
   justify-content: center;
   gap: 12px;
   border: 1px solid transparent;
-  border-radius: 2px;
+  border-radius: 999px;
 }
 .button:hover:not(:disabled) {
   background: #164b77;
@@ -261,11 +262,6 @@ a:focus-visible {
   color: #c2d1dd;
   margin-bottom: 27px;
 }
-.eyebrow-line {
-  width: 24px;
-  border-top: 1px solid #c2d1dd;
-  transform: rotate(-6deg);
-}
 .welcome h1 {
   font-family: Manrope, sans-serif;
   font-size: clamp(55px, 5.7vw, 82px);
@@ -288,9 +284,9 @@ a:focus-visible {
   background: var(--fog);
   color: var(--blue);
   margin-top: 29px;
-  min-width: 188px;
+  width: 200px;
+  min-width: 0;
   padding: 15px 23px;
-  clip-path: polygon(0.8% 2%, 99% 0, 100% 95%, 1% 100%, 0 64%);
 }
 .button-paper:hover:not(:disabled) {
   background: #f1f3f6;
@@ -322,15 +318,18 @@ a:focus-visible {
   border: 1px solid #0b3a6340;
   color: var(--ink);
   padding: 11px 15px;
-  min-width: 167px;
+  width: 200px;
+  height: 58px;
+  min-width: 0;
+  justify-content: center;
   text-align: left;
-  transform: rotate(-1deg);
+  transform: none;
   transition:
     box-shadow 0.2s,
     transform 0.2s;
 }
 .hero-shift-options > button:nth-child(2) {
-  transform: rotate(1deg);
+  transform: none;
 }
 .hero-shift-options > button[aria-pressed="true"] {
   background: var(--blue);
@@ -390,24 +389,6 @@ a:focus-visible {
   width: 100%;
   position: relative;
   isolation: isolate;
-}
-.scene-orbit {
-  position: absolute;
-  width: 440px;
-  height: 440px;
-  border: 1px solid #e4e8ed22;
-  border-radius: 50%;
-  top: 54px;
-  left: 15%;
-  z-index: -1;
-  transform: rotate(-20deg);
-}
-.scene-orbit::before {
-  content: "";
-  position: absolute;
-  inset: -27px;
-  border: 1px dashed #e4e8ed13;
-  border-radius: 50%;
 }
 .paper-school {
   position: absolute;
@@ -486,35 +467,6 @@ a:focus-visible {
   transform: rotate(4deg);
   opacity: 0.92;
 }
-.scene-stamp {
-  position: absolute;
-  right: 0;
-  bottom: 4px;
-  width: 102px;
-  height: 102px;
-  border: 1px dashed #0b3a6380;
-  outline: 5px solid var(--fog);
-  background: var(--fog);
-  border-radius: 50%;
-  z-index: 4;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transform: rotate(12deg);
-  box-shadow: 5px 8px 0 #082d4d18;
-  color: var(--ink);
-}
-.scene-stamp > span:not(.stamp-star) {
-  font-size: 6px;
-  letter-spacing: 1.5px;
-  font-weight: 600;
-}
-.stamp-star {
-  font-size: 32px;
-  line-height: 1.3;
-  font-family: Georgia, serif;
-}
 .paper-scene figcaption {
   position: absolute;
   left: 13%;
@@ -528,11 +480,6 @@ a:focus-visible {
   font-size: 16px;
   z-index: 5;
   white-space: nowrap;
-}
-.caption-line {
-  width: 23px;
-  border-bottom: 1px solid currentColor;
-  transform: rotate(-8deg);
 }
 .enrollment-shell {
   width: min(1160px, calc(100% - 96px));
@@ -1339,6 +1286,88 @@ dialog h2 {
   text-decoration: underline;
   text-underline-offset: 4px;
 }
+/* Shared orange paper accents and the return to blue at the foot of the page. */
+button {
+  border-radius: 999px;
+}
+.paper-plane {
+  flex-shrink: 0;
+  filter: drop-shadow(1px 2px 0 #0b3a6318);
+}
+.accent,
+.stat-label.accent {
+  color: var(--orange);
+}
+.search-input > svg {
+  color: var(--orange);
+}
+.class-card,
+.class-stamp {
+  border-color: var(--orange);
+}
+.paper-sun {
+  border: 2px solid var(--orange);
+}
+.paper-school {
+  aspect-ratio: 3 / 2;
+}
+.paper-school > img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.facade-details {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.graduation-badge {
+  position: absolute;
+  z-index: 4;
+  width: 130px;
+  height: 114px;
+  right: -6px;
+  bottom: -3px;
+  transform: rotate(10deg);
+  filter: drop-shadow(5px 7px 0 #082d4d25);
+}
+.app-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    #0b3a63 0,
+    #0b3a63 110px,
+    rgba(11, 58, 99, 0.8) 220px,
+    transparent 460px
+  );
+}
+.main-footer {
+  color: var(--fog);
+  border-color: #e4e8ed35;
+}
+.hero-shift-options small {
+  line-height: 1.3;
+}
+.hero-shift-options > button span {
+  text-align: left;
+}
+.nav-item {
+  border: 1px solid transparent;
+  padding: 10px 12px;
+}
+.nav-item.active {
+  border-color: #e4e8ed55;
+  background: #e4e8ed0b;
+}
+.nav-item.active::after {
+  display: none;
+}
 @media (max-width: 1150px) {
   .topbar,
   .welcome {
@@ -1416,24 +1445,6 @@ dialog h2 {
   .cloud-left {
     width: 115px;
     top: 95px;
-  }
-  .scene-orbit {
-    width: 340px;
-    height: 340px;
-    left: 13%;
-    top: 80px;
-  }
-  .scene-stamp {
-    width: 86px;
-    height: 86px;
-    bottom: 0;
-    right: -5px;
-  }
-  .scene-stamp > span:not(.stamp-star) {
-    font-size: 5px;
-  }
-  .stamp-star {
-    font-size: 28px;
   }
   .paper-scene figcaption {
     font-size: 13px;
@@ -1537,9 +1548,6 @@ dialog h2 {
     letter-spacing: 1px;
     gap: 7px;
   }
-  .eyebrow-line {
-    width: 15px;
-  }
   .welcome-copy > p {
     font-size: 11px;
   }
@@ -1549,13 +1557,13 @@ dialog h2 {
     gap: 9px;
   }
   .hero-shift-options > button {
-    width: 185px;
+    width: 200px;
     min-width: 0;
     padding: 9px 13px;
   }
   .hero-shift-options small {
-    display: inline;
-    margin-left: 7px;
+    display: block;
+    margin-left: 0;
     font-size: 7px;
   }
   .shift-prompt {
@@ -1596,34 +1604,11 @@ dialog h2 {
     top: 105px;
     left: 2%;
   }
-  .scene-orbit {
-    width: 280px;
-    height: 280px;
-    left: 12%;
-    top: 80px;
-  }
-  .scene-stamp {
-    bottom: 10px;
-    width: 70px;
-    height: 70px;
-    right: -3px;
-    outline-width: 3px;
-  }
-  .scene-stamp > span:not(.stamp-star) {
-    font-size: 4px;
-    letter-spacing: 1px;
-  }
-  .stamp-star {
-    font-size: 24px;
-  }
   .paper-scene figcaption {
     font-size: 11px;
     left: 0;
     bottom: -5px;
     gap: 7px;
-  }
-  .caption-line {
-    width: 15px;
   }
   .edition-note {
     font-size: 6px;
@@ -1818,9 +1803,6 @@ dialog h2 {
     margin-bottom: 23px;
     gap: 9px;
   }
-  .eyebrow-line {
-    width: 20px;
-  }
   .welcome h1 {
     font-size: clamp(49px, 11.5vw, 72px);
     letter-spacing: -2.7px;
@@ -1896,21 +1878,6 @@ dialog h2 {
     width: 99px;
     left: 0;
     top: 52px;
-  }
-  .scene-orbit {
-    width: 245px;
-    height: 245px;
-    top: 35px;
-    left: calc(50% - 122px);
-  }
-  .scene-orbit::before {
-    inset: -17px;
-  }
-  .scene-stamp {
-    width: 69px;
-    height: 69px;
-    bottom: 2px;
-    right: 5px;
   }
   .paper-scene figcaption {
     left: 8%;
@@ -2159,7 +2126,7 @@ dialog h2 {
         rgba(228, 232, 237, 0.2) 87%,
         transparent 100%
       ),
-      linear-gradient(180deg, #0b3a63 1000px, #e4e8ed 2090px, #e4e8ed 100%);
+      var(--blue);
   }
   dialog {
     padding: 32px 25px;
@@ -2172,6 +2139,46 @@ dialog h2 {
   }
   .countdown strong {
     font-size: 23px;
+  }
+}
+@media (min-width: 901px) and (max-width: 1150px) {
+  .button-paper,
+  .hero-shift-options > button {
+    width: 170px;
+  }
+}
+@media (max-width: 900px) {
+  .button-paper {
+    width: 200px;
+  }
+  .graduation-badge {
+    width: 105px;
+    height: 94px;
+  }
+}
+@media (max-width: 650px) {
+  .button-paper {
+    width: 100%;
+    min-width: 0;
+  }
+  .hero-shift-options {
+    gap: 12px;
+  }
+  .hero-shift-options > button {
+    width: calc(50% - 6px);
+    height: 58px;
+  }
+  .graduation-badge {
+    width: 100px;
+    height: 88px;
+    right: 0;
+    bottom: -7px;
+  }
+  .topbar nav {
+    gap: 8px;
+  }
+  .nav-item {
+    padding: 9px 8px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

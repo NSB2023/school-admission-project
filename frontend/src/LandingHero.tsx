@@ -1,10 +1,5 @@
-import {
-  ArrowDown,
-  ArrowRight,
-  ArrowUpRight,
-  Sun,
-  Sunrise,
-} from "lucide-react";
+import { Sun, Sunrise } from "lucide-react";
+import PaperPlane from "./PaperPlane";
 import SchoolIllustration from "./SchoolIllustration";
 
 export default function LandingHero({
@@ -24,9 +19,7 @@ export default function LandingHero({
   return (
     <section className="welcome" aria-labelledby="welcome-heading">
       <div className="welcome-copy">
-        <div className="eyebrow">
-          <span className="eyebrow-line" /> A PLACE TO LEARN. A SPACE TO BECOME.
-        </div>
+        <div className="eyebrow">A PLACE TO LEARN. A SPACE TO BECOME.</div>
         <h1 id="welcome-heading">
           A bright future
           <br />
@@ -38,7 +31,7 @@ export default function LandingHero({
           Find your classroom. Make it your own.
         </p>
         <button className="button button-paper" onClick={onExplore}>
-          Find your place <ArrowRight size={20} />
+          Find your place <PaperPlane size={20} />
         </button>
         <div className="hero-shifts">
           <span className="shift-prompt">
@@ -78,10 +71,10 @@ export default function LandingHero({
       </div>
       <div className="hero-bottom">
         <button onClick={onExplore}>
-          <ArrowDown size={16} /> A little scroll. A world of possibilities.
+          <PaperPlane size={16} /> A little scroll. A world of possibilities.
         </button>
         <button onClick={onGuide}>
-          How does it all work? <ArrowUpRight size={15} />
+          How does it all work? <PaperPlane size={15} />
         </button>
       </div>
     </section>

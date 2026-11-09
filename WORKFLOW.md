@@ -286,7 +286,8 @@ minimum backend tests, Docker startup, and required documents.
 Implemented: application code, dependency lockfiles, Docker configuration, Git
 initialization, all eight endpoints, background expiry, and the paper-cut,
 deep-blue/fog-white UI. Morning/day controls update the sun, clouds, and class
-filter together; orange remains deferred. Verified: 13 PostgreSQL-backed tests, 8 browser
+filter together. User-selected orange accents, pill buttons, facade details,
+and the return to blue at the footer are implemented. Verified: 13 PostgreSQL-backed tests, 9 browser
 tests, production frontend build, and Compose configuration. Measured backend
 coverage: 96.4% lines and 94.73% branches.
 

@@ -14,6 +14,14 @@ cloud transitions, paper-ticket layout, and oval fog background. Existing admiss
 actions were retained. New browser checks cover weather/filter synchronization
 and headline placement, alongside the original admission regression suite.
 
+The next revision applied the user's orange placement instructions, replaced
+arrow icons with a shared paper-plane SVG, added editable School/clock facade
+details, replaced the circular stamp with a graduation cap, and corrected pill
+button alignment. A tablet regression test reproduced the old width mismatch
+before the fix. Chrome checks verified the orange guide digits separately from
+their leading zeros, the requested accent colors, the removed sky rings, and
+the absence of horizontal overflow on mobile.
+
 Tests were written against placeholder backend/UI implementations first. The
 initial API contract test failed because class creation returned 501, and the
 initial browser test failed because the admissions screen was not implemented.

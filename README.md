@@ -3,8 +3,9 @@
 A school-admission portal with temporary seat reservations, automatic expiry,
 simulated payment, and application history. The paper-cut landing page uses deep
 blue `rgb(11, 58, 99)` and fog white `rgb(228, 232, 237)`, with a wide textured
-school illustration and an oval fog transition. Orange is reserved for a later
-design pass and is not currently applied.
+school illustration and an oval fog transition that returns to blue at the footer.
+Orange `rgb(255, 145, 0)` accents the sun outlines, paper-plane icons, search,
+class-card borders, selected text, and the graduation cap's ribbon.
 
 ## Run with Docker
 
@@ -140,7 +141,7 @@ the application build.
 
 The native .NET/PostgreSQL integration tests and Chrome browser tests have been
 executed. The production frontend build passes and Compose configuration validates.
-Latest local result: **13 backend tests and 8 browser tests pass**; measured backend
+Latest local result: **13 backend tests and 9 browser tests pass**; measured backend
 coverage is **96.4% lines and 94.73% branches**.
 The live API was also restarted and all six preview class records remained;
 production-mode malformed-input JSON and browser-test CORS were checked directly.
