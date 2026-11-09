@@ -4,7 +4,7 @@ A school-admission portal with temporary seat reservations, automatic expiry,
 simulated payment, and application history. The paper-cut landing page uses deep
 blue `rgb(11, 58, 99)` and fog white `rgb(228, 232, 237)`, with a wide textured
 school illustration and an oval fog transition that returns to blue at the footer.
-Orange `rgb(255, 145, 0)` accents the sun outlines, paper-plane icons, search,
+Orange `rgb(255, 145, 0)` accents the rounded sun rays, paper-plane icons, search,
 class-card borders, selected text, and the graduation cap's ribbon.
 
 ## Run with Docker

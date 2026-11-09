@@ -34,7 +34,17 @@ export default function SchoolIllustration({
       className={`paper-scene ${period}`}
       aria-label={`${period === "morning" ? "Morning" : "Day"} at school`}
     >
-      <div className="paper-sun" role="img" aria-label="Sun" />
+      <div className="paper-sun" role="img" aria-label="Sun">
+        <svg className="sun-rays" viewBox="0 0 200 200" aria-hidden="true">
+          {Array.from({ length: 12 }, (_, i) => (
+            <path
+              key={i}
+              d="M100 20V7"
+              transform={`rotate(${i * 30} 100 100)`}
+            />
+          ))}
+        </svg>
+      </div>
       <div className="paper-clouds" role="img" aria-label="Clouds">
         <PaperCloud className="cloud cloud-right" />
         <PaperCloud className="cloud cloud-left" />

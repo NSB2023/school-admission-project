@@ -300,9 +300,9 @@ a:focus-visible {
   display: block;
   font-size: 10px;
   color: var(--ink);
-  background: var(--fog);
+  background: transparent;
   width: fit-content;
-  padding: 4px 7px;
+  padding: 0;
   margin-bottom: 13px;
 }
 .hero-shift-options {
@@ -427,6 +427,17 @@ a:focus-visible {
   inset: 7px;
   border: 1px solid #f2f4f650;
   border-radius: inherit;
+}
+.sun-rays {
+  position: absolute;
+  inset: -30%;
+  width: 160%;
+  height: 160%;
+  overflow: visible;
+  fill: none;
+  stroke: var(--orange);
+  stroke-width: 8;
+  stroke-linecap: round;
 }
 .day .paper-sun {
   left: calc(50% - 64px);
@@ -1167,6 +1178,13 @@ dialog h2 {
 }
 .create-form .button {
   margin-top: 5px;
+  background: var(--orange);
+  border-color: var(--orange);
+  color: var(--ink);
+}
+.create-form .button:hover:not(:disabled) {
+  background: #ffab36;
+  border-color: #ffab36;
 }
 .form-error {
   font-size: 11px;
@@ -1304,9 +1322,6 @@ button {
 .class-card,
 .class-stamp {
   border-color: var(--orange);
-}
-.paper-sun {
-  border: 2px solid var(--orange);
 }
 .paper-school {
   aspect-ratio: 3 / 2;
@@ -1751,6 +1766,9 @@ button {
   }
 }
 @media (max-width: 650px) {
+  .shift-prompt {
+    color: var(--fog);
+  }
   .topbar,
   .welcome {
     width: calc(100% - 40px);
