@@ -160,3 +160,86 @@ test("expired reservations update and stop payment without a reload", async ({
     page.getByRole("button", { name: "Pay admission fee" }),
   ).toHaveCount(0);
 });
+
+test("paper-cut scene follows the selected shift and filters its classes", async ({
+  page,
+}) => {
+  await page.route("**/classes", (route) =>
+    route.fulfill({
+      json: [
+        {
+          id: "morning",
+          name: "Class 6 – Morning Shift",
+          totalSeats: 10,
+          availableSeats: 10,
+          heldSeats: 0,
+          confirmedSeats: 0,
+        },
+        {
+          id: "day",
+          name: "Class 6 – Day Shift",
+          totalSeats: 10,
+          availableSeats: 10,
+          heldSeats: 0,
+          confirmedSeats: 0,
+        },
+      ],
+    }),
+  );
+  await page.goto("/");
+  const selector = page.getByRole("group", { name: "Choose your shift" });
+  const school = page.getByRole("img", { name: "Paper-cut school building" });
+  const sun = page.getByRole("img", { name: "Sun", exact: true });
+  const clouds = page.getByRole("img", { name: "Clouds", includeHidden: true });
+  await selector
+    .getByRole("button", { name: "Morning shift", exact: true })
+    .click();
+  await expect(clouds).toBeVisible();
+  await expect(
+    page.getByRole("article", { name: "Class 6 – Day Shift" }),
+  ).toHaveCount(0);
+  await expect
+    .poll(async () => {
+      const a = (await sun.boundingBox())!,
+        b = (await school.boundingBox())!;
+      return a.x + a.width / 2 > b.x + b.width * 0.65;
+    })
+    .toBe(true);
+  await selector
+    .getByRole("button", { name: "Day shift", exact: true })
+    .click();
+  await expect(clouds).toBeHidden();
+  await expect(
+    page.getByRole("article", { name: "Class 6 – Morning Shift" }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("article", { name: "Class 6 – Day Shift" }),
+  ).toBeVisible();
+  await expect
+    .poll(async () => {
+      const a = (await sun.boundingBox())!,
+        b = (await school.boundingBox())!;
+      return (
+        Math.abs(a.x + a.width / 2 - (b.x + b.width / 2)) < b.width * 0.12 &&
+        a.y < b.y
+      );
+    })
+    .toBe(true);
+});
+
+test("desktop headline sits beside the school rather than covering it", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  const heading = await page
+    .getByRole("heading", { name: "A bright future starts here." })
+    .boundingBox();
+  const school = await page
+    .getByRole("img", { name: "Paper-cut school building" })
+    .boundingBox();
+  expect(heading).not.toBeNull();
+  expect(school).not.toBeNull();
+  expect(heading!.x + heading!.width).toBeLessThanOrEqual(school!.x + 30);
+  expect(heading!.y).toBeLessThan(school!.y + school!.height);
+});

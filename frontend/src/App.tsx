@@ -16,7 +16,6 @@ import {
   Plus,
   Search,
   ShieldCheck,
-  Sparkles,
   Sun,
   Sunset,
   Users,
@@ -24,7 +23,7 @@ import {
 } from "lucide-react";
 import { api } from "./api";
 import type { Hold, SchoolClass } from "./api";
-import SchoolIllustration from "./SchoolIllustration";
+import LandingHero from "./LandingHero";
 import "./styles.css";
 
 function storedIdentity() {
@@ -297,69 +296,19 @@ export default function App() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <aside className="sidebar">
-        <a className="brand" href="/" aria-label="Schoolgate home">
-          <span className="brand-mark">
-            <GraduationCap size={26} strokeWidth={1.8} />
-          </span>
-          <span>
-            schoolgate<span className="brand-dot">.</span>
-            <small>THE ADMISSIONS PORTAL</small>
-          </span>
-        </a>
-        <div className="school-label">
-          <span className="school-avatar">
-            <BookOpen size={19} />
-          </span>
-          <div>
-            School admissions<small>Academic year {year}</small>
-          </div>
-        </div>
-        <div className="nav-label">YOUR NEXT CHAPTER</div>
-        <nav aria-label="Main navigation">{navigation}</nav>
-        <div className="sidebar-note">
-          <span className="note-icon">
-            <Sparkles size={22} />
-          </span>
-          <h3>
-            Big dreams.
-            <br />
-            Small first steps.
-          </h3>
-          <p>
-            A new school year.
-            <br />A world of possibilities.
-          </p>
-          <div className="note-line" />
-        </div>
-        <button className="sidebar-help" onClick={() => setModal("guide")}>
-          <CircleHelp size={18} />
-          <span>
-            Need a little guidance?<small>We're here to help you start.</small>
-          </span>
-          <ArrowUpRight size={16} />
-        </button>
-        <div className="sidebar-footer">
-          A simpler way to start.
-          <span>© {new Date().getFullYear()} Schoolgate</span>
-        </div>
-      </aside>
-
       <div className="workspace">
         <header className="topbar">
-          <div className="breadcrumb">
-            Admissions
-            <ChevronRight size={14} />
+          <a className="brand" href="/" aria-label="Schoolgate home">
+            <span className="brand-mark">
+              <GraduationCap size={30} strokeWidth={1.5} />
+            </span>
             <span>
-              {view === "classes" ? "Available classes" : "My applications"}
+              schoolgate<small>A WORLD OF POSSIBILITY</small>
             </span>
-          </div>
+          </a>
+          <nav aria-label="Main navigation">{navigation}</nav>
           <div className="topbar-right">
-            <span className="year-chip">
-              <GraduationCap size={15} />
-              {year} academic year
-            </span>
-            <span className="admin-label">School admin</span>
+            <span className="year-chip">ADMISSIONS {year}</span>
             <button
               className="button button-small button-outline"
               onClick={() => {
@@ -372,354 +321,329 @@ export default function App() {
             </button>
           </div>
         </header>
-        <nav className="mobile-nav" aria-label="Mobile navigation">
-          {navigation}
-        </nav>
         <main id="main">
-          <section className="welcome">
-            <div className="welcome-copy">
-              <div className="eyebrow">
-                <span />A NEW CHAPTER AWAITS
-              </div>
-              <h1>
-                A bright future
-                <br />
-                <span>starts here.</span>
-              </h1>
-              <p>
-                Find the right class. Reserve a seat.
-                <br className="desktop-break" /> Take the first step toward
-                something wonderful.
-              </p>
-              <button className="text-link" onClick={() => setModal("guide")}>
-                Your guide to getting started
-                <ArrowUpRight size={16} />
-              </button>
+          <LandingHero
+            year={year}
+            shift={shift}
+            onShift={setShift}
+            onGuide={() => setModal("guide")}
+            onExplore={() => {
+              setView("classes");
+              document
+                .getElementById("list-heading")
+                ?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+          />
+          <div className="enrollment-shell">
+            <div className="enrollment-intro">
+              <span>THE FIRST STEP IS YOURS.</span>
+              <span>{year} / SCHOOL ADMISSIONS</span>
             </div>
-            <div className="welcome-art">
-              <SchoolIllustration />
-              <div className="art-label">
-                <span className="little-star">✦</span>Room to learn. Space to
-                grow.
-              </div>
-            </div>
-            <div className="hero-year">ADMISSIONS / {year}</div>
-          </section>
-
-          <section className="identity-card" aria-labelledby="identity-heading">
-            <span className="identity-icon">
-              <Fingerprint size={26} strokeWidth={1.5} />
-            </span>
-            <div className="identity-copy">
-              <h2 id="identity-heading">Let's make this your journey</h2>
-              <p>
-                Enter your birth registration number to apply and find your
-                applications.
-              </p>
-            </div>
-            <div className="identity-input">
-              <label htmlFor="student-id">Birth registration number</label>
-              <div className={valid ? "input-wrap valid" : "input-wrap"}>
-                <input
-                  id="student-id"
-                  ref={identityInput}
-                  value={student}
-                  onChange={(e) => changeIdentity(e.target.value)}
-                  inputMode="numeric"
-                  autoComplete="off"
-                  maxLength={17}
-                  placeholder="Your 17-digit registration number"
-                  aria-describedby="identity-hint"
-                  disabled={!!pending}
-                />
-                {valid ? <CheckCircle2 size={17} /> : <ShieldCheck size={17} />}
-              </div>
-              <span id="identity-hint">
-                {valid
-                  ? "Ready to apply · saved on this device"
-                  : "17 digits · no login needed"}
-              </span>
-            </div>
-          </section>
-
-          {error && (
-            <div className="error-banner" role="alert">
-              <CircleHelp size={19} />
-              <div>{error.message}</div>
-              {error.network && (
-                <button onClick={() => setRefresh((v) => v + 1)}>
-                  Try again
-                </button>
-              )}
-              <button
-                className="icon-button"
-                onClick={() => setError(null)}
-                aria-label="Dismiss error"
-              >
-                <X size={17} />
-              </button>
-            </div>
-          )}
-          {notice && (
-            <div className="notice-banner" role="status">
-              <CheckCircle2 size={18} />
-              {notice}
-              <button
-                className="icon-button"
-                onClick={() => setNotice("")}
-                aria-label="Dismiss notification"
-              >
-                <X size={17} />
-              </button>
-            </div>
-          )}
-
-          <section className="stats" aria-label="Admissions at a glance">
-            <div className="stat">
-              <span className="stat-icon">
-                <BookOpen size={23} />
-              </span>
-              <div>
-                <span className="stat-label">Classes & shifts</span>
-                <strong>
-                  {loading ? "—" : String(classes.length).padStart(2, "0")}
-                </strong>
-              </div>
-              <span className="stat-note">Find your fit</span>
-            </div>
-            <div className="stat">
-              <span className="stat-icon">
-                <Users size={23} />
-              </span>
-              <div>
-                <span className="stat-label">Available seats</span>
-                <strong>
-                  {loading ? "—" : totals.available}
-                  <small> / {totals.seats}</small>
-                </strong>
-              </div>
-              <span className="stat-note live">
-                <i />
-                Live availability
-              </span>
-            </div>
-            <button
-              className="stat stat-link"
-              onClick={() => setView("applications")}
+            <section
+              className="identity-card"
+              aria-labelledby="identity-heading"
             >
-              <span className="stat-icon orange">
-                <FileText size={23} />
+              <span className="identity-icon">
+                <Fingerprint size={26} strokeWidth={1.5} />
               </span>
-              <div>
-                <span className="stat-label">My applications</span>
-                <strong>
-                  {valid ? String(holds.length).padStart(2, "0") : "—"}
-                </strong>
-              </div>
-              <ArrowUpRight size={20} className="stat-arrow" />
-            </button>
-          </section>
-
-          <section className="list-section" aria-labelledby="list-heading">
-            <div className="section-heading">
-              <div>
-                <div className="overline">
-                  {view === "classes"
-                    ? "MAKE ROOM FOR POSSIBILITY"
-                    : "EVERY STEP, IN ONE PLACE"}
-                </div>
-                <h2 id="list-heading">
-                  {view === "classes"
-                    ? "Find your next classroom"
-                    : "Your applications"}
-                  <span>
-                    {view === "classes" ? classes.length : holds.length}
-                  </span>
-                </h2>
+              <div className="identity-copy">
+                <h2 id="identity-heading">Let's make this your journey</h2>
                 <p>
-                  {view === "classes"
-                    ? "One application. A whole new beginning. Choose a class to get started."
-                    : "Follow your reservations, confirm admission, and see your application history."}
+                  Enter your birth registration number to apply and find your
+                  applications.
                 </p>
               </div>
-              <span className="refresh-label">
-                <span
-                  className={
-                    error?.network ? "connection-dot offline" : "connection-dot"
-                  }
-                />
-                {error?.network
-                  ? "Connection interrupted"
-                  : updated
-                    ? "Updates automatically"
-                    : "Connecting…"}
-              </span>
-            </div>
-            {view === "classes" && (
-              <div className="filter-row">
-                <div
-                  className="shift-tabs"
-                  role="group"
-                  aria-label="Filter by shift"
-                >
-                  {["All shifts", "Morning shift", "Day shift"].map((item) => (
-                    <button
-                      key={item}
-                      className={shift === item ? "selected" : ""}
-                      onClick={() => setShift(item)}
-                    >
-                      {item === "Morning shift" && <Sun size={15} />}
-                      {item === "Day shift" && <Sunset size={15} />}
-                      {item === "All shifts" && <LayoutGrid size={15} />}
-                      {item === "Morning shift"
-                        ? "Morning"
-                        : item === "Day shift"
-                          ? "Day shift"
-                          : item}
-                    </button>
-                  ))}
-                </div>
-                <label className="search-input">
-                  <Search size={17} />
+              <div className="identity-input">
+                <label htmlFor="student-id">Birth registration number</label>
+                <div className={valid ? "input-wrap valid" : "input-wrap"}>
                   <input
-                    aria-label="Search classes"
-                    placeholder="Search for a class…"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    id="student-id"
+                    ref={identityInput}
+                    value={student}
+                    onChange={(e) => changeIdentity(e.target.value)}
+                    inputMode="numeric"
+                    autoComplete="off"
+                    maxLength={17}
+                    placeholder="Your 17-digit registration number"
+                    aria-describedby="identity-hint"
+                    disabled={!!pending}
                   />
-                </label>
+                  {valid ? (
+                    <CheckCircle2 size={17} />
+                  ) : (
+                    <ShieldCheck size={17} />
+                  )}
+                </div>
+                <span id="identity-hint">
+                  {valid
+                    ? "Ready to apply · saved on this device"
+                    : "17 digits · no login needed"}
+                </span>
+              </div>
+            </section>
+
+            {error && (
+              <div className="error-banner" role="alert">
+                <CircleHelp size={19} />
+                <div>{error.message}</div>
+                {error.network && (
+                  <button onClick={() => setRefresh((v) => v + 1)}>
+                    Try again
+                  </button>
+                )}
+                <button
+                  className="icon-button"
+                  onClick={() => setError(null)}
+                  aria-label="Dismiss error"
+                >
+                  <X size={17} />
+                </button>
+              </div>
+            )}
+            {notice && (
+              <div className="notice-banner" role="status">
+                <CheckCircle2 size={18} />
+                {notice}
+                <button
+                  className="icon-button"
+                  onClick={() => setNotice("")}
+                  aria-label="Dismiss notification"
+                >
+                  <X size={17} />
+                </button>
               </div>
             )}
 
-            {loading ? (
-              <div className="class-grid" aria-label="Loading classes">
-                {[1, 2, 3].map((i) => (
-                  <div className="skeleton" key={i} />
-                ))}
+            <section className="stats" aria-label="Admissions at a glance">
+              <div className="stat">
+                <span className="stat-icon">
+                  <BookOpen size={23} />
+                </span>
+                <div>
+                  <span className="stat-label">Ways to begin</span>
+                  <strong>
+                    {loading ? "—" : String(classes.length).padStart(2, "0")}
+                  </strong>
+                </div>
+                <span className="stat-note">Find your fit</span>
               </div>
-            ) : view === "classes" ? (
-              filtered.length ? (
+              <div className="stat">
+                <span className="stat-icon">
+                  <Users size={23} />
+                </span>
+                <div>
+                  <span className="stat-label">Places for possibility</span>
+                  <strong>
+                    {loading ? "—" : totals.available}
+                    <small> / {totals.seats}</small>
+                  </strong>
+                </div>
+                <span className="stat-note live">
+                  <i />
+                  Live availability
+                </span>
+              </div>
+              <button
+                className="stat stat-link"
+                onClick={() => setView("applications")}
+              >
+                <span className="stat-icon">
+                  <FileText size={23} />
+                </span>
+                <div>
+                  <span className="stat-label">My applications</span>
+                  <strong>
+                    {valid ? String(holds.length).padStart(2, "0") : "—"}
+                  </strong>
+                </div>
+                <ArrowUpRight size={20} className="stat-arrow" />
+              </button>
+            </section>
+
+            <section className="list-section" aria-labelledby="list-heading">
+              <div className="section-heading">
+                <div>
+                  <div className="overline">
+                    {view === "classes"
+                      ? "MAKE ROOM FOR POSSIBILITY"
+                      : "EVERY STEP, IN ONE PLACE"}
+                  </div>
+                  <h2 id="list-heading">
+                    {view === "classes"
+                      ? "Find your next classroom"
+                      : "Your applications"}
+                    <span>
+                      {view === "classes" ? classes.length : holds.length}
+                    </span>
+                  </h2>
+                  <p>
+                    {view === "classes"
+                      ? "One application. A whole new beginning. Choose a class to get started."
+                      : "Follow your reservations, confirm admission, and see your application history."}
+                  </p>
+                </div>
+                <span className="refresh-label">
+                  <span
+                    className={
+                      error?.network
+                        ? "connection-dot offline"
+                        : "connection-dot"
+                    }
+                  />
+                  {error?.network
+                    ? "Connection interrupted"
+                    : updated
+                      ? "Updates automatically"
+                      : "Connecting…"}
+                </span>
+              </div>
+              {view === "classes" && (
+                <div className="filter-row">
+                  <div
+                    className="shift-tabs"
+                    role="group"
+                    aria-label="Filter by shift"
+                  >
+                    {["All shifts", "Morning shift", "Day shift"].map(
+                      (item) => (
+                        <button
+                          key={item}
+                          className={shift === item ? "selected" : ""}
+                          onClick={() => setShift(item)}
+                          aria-pressed={shift === item}
+                        >
+                          {item === "Morning shift" && <Sun size={15} />}
+                          {item === "Day shift" && <Sunset size={15} />}
+                          {item === "All shifts" && <LayoutGrid size={15} />}
+                          {item === "Morning shift"
+                            ? "Morning"
+                            : item === "Day shift"
+                              ? "Day shift"
+                              : item}
+                        </button>
+                      ),
+                    )}
+                  </div>
+                  <label className="search-input">
+                    <Search size={17} />
+                    <input
+                      aria-label="Search classes"
+                      placeholder="Search for a class…"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                    />
+                  </label>
+                </div>
+              )}
+
+              {loading ? (
+                <div className="class-grid" aria-label="Loading classes">
+                  {[1, 2, 3].map((i) => (
+                    <div className="skeleton" key={i} />
+                  ))}
+                </div>
+              ) : view === "classes" ? (
+                filtered.length ? (
+                  <div className="class-grid">
+                    {filtered.map((c) => (
+                      <ClassCard
+                        key={c.id}
+                        c={c}
+                        hold={activeHolds.find((h) => h.classId === c.id)}
+                        pending={!!pending}
+                        onApply={() => apply(c)}
+                        onView={(hold) => setSelectedHold(hold)}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <Empty
+                    title={
+                      classes.length
+                        ? "No matching classes"
+                        : "A new beginning is on its way"
+                    }
+                    text={
+                      classes.length
+                        ? "Try another search or choose a different shift."
+                        : "Classes will appear here as your school opens them for admission."
+                    }
+                    action={
+                      classes.length ? (
+                        <button
+                          className="button button-outline"
+                          onClick={() => {
+                            setQuery("");
+                            setShift("All shifts");
+                          }}
+                        >
+                          Clear filters
+                        </button>
+                      ) : (
+                        <button
+                          className="button button-outline"
+                          onClick={() => setModal("create")}
+                        >
+                          <Plus size={17} />
+                          Create the first class
+                        </button>
+                      )
+                    }
+                  />
+                )
+              ) : !valid ? (
+                <Empty
+                  title="Your journey belongs here"
+                  text="Enter your 17-digit birth registration number above to find your applications."
+                  action={
+                    <button
+                      className="button button-outline"
+                      onClick={() => identityInput.current?.focus()}
+                    >
+                      Enter registration number
+                      <ArrowUpRight size={16} />
+                    </button>
+                  }
+                />
+              ) : holds.length ? (
                 <div className="class-grid">
-                  {filtered.map((c) => (
-                    <ClassCard
-                      key={c.id}
-                      c={c}
-                      hold={activeHolds.find((h) => h.classId === c.id)}
-                      pending={!!pending}
-                      onApply={() => apply(c)}
-                      onView={(hold) => setSelectedHold(hold)}
+                  {holds.map((hold) => (
+                    <ApplicationCard
+                      key={hold.holdId}
+                      hold={hold}
+                      now={now}
+                      onView={() => setSelectedHold(hold)}
                     />
                   ))}
                 </div>
               ) : (
                 <Empty
-                  title={
-                    classes.length
-                      ? "No matching classes"
-                      : "A new beginning is on its way"
-                  }
-                  text={
-                    classes.length
-                      ? "Try another search or choose a different shift."
-                      : "Classes will appear here as your school opens them for admission."
-                  }
+                  title="Your next chapter is still unwritten"
+                  text="Reserve a seat in an available class and your application will appear here."
                   action={
-                    classes.length ? (
-                      <button
-                        className="button button-outline"
-                        onClick={() => {
-                          setQuery("");
-                          setShift("All shifts");
-                        }}
-                      >
-                        Clear filters
-                      </button>
-                    ) : (
-                      <button
-                        className="button button-outline"
-                        onClick={() => setModal("create")}
-                      >
-                        <Plus size={17} />
-                        Create the first class
-                      </button>
-                    )
+                    <button
+                      className="button"
+                      onClick={() => setView("classes")}
+                    >
+                      Explore classes
+                      <ArrowRight size={16} />
+                    </button>
                   }
                 />
-              )
-            ) : !valid ? (
-              <Empty
-                title="Your journey belongs here"
-                text="Enter your 17-digit birth registration number above to find your applications."
-                action={
-                  <button
-                    className="button button-outline"
-                    onClick={() => identityInput.current?.focus()}
-                  >
-                    Enter registration number
-                    <ArrowUpRight size={16} />
-                  </button>
-                }
-              />
-            ) : holds.length ? (
-              <div className="class-grid">
-                {holds.map((hold) => (
-                  <ApplicationCard
-                    key={hold.holdId}
-                    hold={hold}
-                    now={now}
-                    onView={() => setSelectedHold(hold)}
-                  />
-                ))}
-              </div>
-            ) : (
-              <Empty
-                title="Your next chapter is still unwritten"
-                text="Reserve a seat in an available class and your application will appear here."
-                action={
-                  <button className="button" onClick={() => setView("classes")}>
-                    Explore classes
-                    <ArrowRight size={16} />
-                  </button>
-                }
-              />
-            )}
-          </section>
+              )}
+            </section>
 
-          <section className="how-strip">
-            <div className="how-heading">
+            <footer className="main-footer">
               <span>
-                <ShieldCheck size={21} />
+                <ShieldCheck size={14} />
+                Seats are allocated on a first-come, first-served basis.
               </span>
-              <div>
-                <h3>Simple steps. A confident start.</h3>
-                <p>Your admission, without the guesswork.</p>
-              </div>
-            </div>
-            <div className="mini-step">
-              <b>01</b>
-              <span>Choose a class</span>
-            </div>
-            <ChevronRight size={15} />
-            <div className="mini-step">
-              <b>02</b>
-              <span>Reserve your seat</span>
-            </div>
-            <ChevronRight size={15} />
-            <div className="mini-step">
-              <b>03</b>
-              <span>Confirm admission</span>
-            </div>
-          </section>
-          <footer className="main-footer">
-            <span>
-              <ShieldCheck size={14} />
-              Seats are allocated on a first-come, first-served basis.
-            </span>
-            <button onClick={() => setModal("guide")}>
-              How admissions work
-              <ArrowUpRight size={13} />
-            </button>
-          </footer>
+              <button onClick={() => setModal("guide")}>
+                How admissions work
+                <ArrowUpRight size={13} />
+              </button>
+            </footer>
+          </div>
         </main>
       </div>
 
@@ -925,11 +849,13 @@ function ClassCard({
   onView: (hold: Hold) => void;
 }) {
   const shift = shiftOf(c.name);
+  const grade = /class\s+(\d+)/i.exec(c.name)?.[1];
   return (
     <article className="class-card" aria-label={c.name}>
       <div className="card-top">
-        <span className="class-icon">
-          <BookOpen size={24} strokeWidth={1.6} />
+        <span className="class-icon class-stamp">
+          <small>{grade ? "CLASS" : "SCHOOL"}</small>
+          <b>{grade || "↗"}</b>
         </span>
         <span
           className={`availability-badge ${c.availableSeats === 0 ? "full" : c.availableSeats <= 10 ? "limited" : ""}`}

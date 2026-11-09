@@ -40,8 +40,14 @@
   This adds no shift field or requirement to the supplied API contract.
 - The displayed academic year is the next calendar year; class names and
   capacities are configured through the UI. The database starts empty.
-- Royal blue `#214bd8`, foggy white `#f6f7fb`, and orange `#ed8b42` implement the
-  requested visual palette. Schoolgate is the portal's presentation name.
+- The revised visual palette is deep blue `rgb(11, 58, 99)` and fog white
+  `rgb(228, 232, 237)`. The requested orange `rgb(255, 145, 0)` is reserved and
+  deliberately unused pending the user's direction. Schoolgate is the portal name.
+- The school is a generated, transparent paper-cut illustration based on the
+  user's architectural reference. Weather is a separate presentation layer:
+  Morning places the sun on the right with clouds; Day places it above the school
+  and hides both clouds. The two hero controls share the class filter's state.
+  All shifts defaults to the morning scene while showing every class.
 - Browser tests are an optional assignment feature included in this TDD workflow.
   Two-process deployment is not required for the core submission. The locking
   design has no in-memory coordination requirement, but multi-process and Docker

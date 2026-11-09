@@ -6,6 +6,14 @@ tests, and documentation. The local Ponytail ultra and ECC TDD/frontend/security
 skills were used as development guidance. The user specified the royal-blue,
 foggy-white, and restrained-orange palette.
 
+For the subsequent frontend revision, the user supplied a paper-cut school
+reference and changed the palette to deep blue `(11, 58, 99)` and fog white
+`(228, 232, 237)`, deferring all orange. The image-generation tool created a
+transparent, wider school asset; React/CSS implements the separate moving sun,
+cloud transitions, paper-ticket layout, and oval fog background. Existing admission
+actions were retained. New browser checks cover weather/filter synchronization
+and headline placement, alongside the original admission regression suite.
+
 Tests were written against placeholder backend/UI implementations first. The
 initial API contract test failed because class creation returned 501, and the
 initial browser test failed because the admissions screen was not implemented.

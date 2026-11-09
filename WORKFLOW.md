@@ -26,7 +26,8 @@ The priorities are:
 5. Optional two-backend verification after the required functionality passes.
 
 No login, real payment gateway, lottery, waitlist, Redis, message broker,
-microservices, or elaborate UI is needed. Use the payment button to simulate
+microservices are needed. The revised visual brief uses a paper-cut school scene
+over a deep-blue, oval-fog background. Use the payment button to simulate
 successful payment as the assignment specifies. Avoid generic repositories,
 CQRS, and separate architectural projects for two database entities.
 
@@ -283,8 +284,9 @@ minimum backend tests, Docker startup, and required documents.
 - [Playwright](https://playwright.dev/docs/intro): browser acceptance testing.
 
 Implemented: application code, dependency lockfiles, Docker configuration, Git
-initialization, all eight endpoints, background expiry, and the royal-blue,
-foggy-white, orange-accented UI. Verified: 13 PostgreSQL-backed tests, 6 browser
+initialization, all eight endpoints, background expiry, and the paper-cut,
+deep-blue/fog-white UI. Morning/day controls update the sun, clouds, and class
+filter together; orange remains deferred. Verified: 13 PostgreSQL-backed tests, 8 browser
 tests, production frontend build, and Compose configuration. Measured backend
 coverage: 96.4% lines and 94.73% branches.
 
