@@ -70,9 +70,6 @@ export default function LandingHero({
         <span className="edition-note">A NEW CHAPTER / {year}</span>
       </div>
       <div className="hero-bottom">
-        <button onClick={onExplore}>
-          <PaperPlane size={16} /> A little scroll. A world of possibilities.
-        </button>
         <button onClick={onGuide}>
           How does it all work? <PaperPlane size={15} />
         </button>
