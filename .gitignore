@@ -1,0 +1,12 @@
+# The assignment explicitly prohibits publishing its PDF.
+/Asst_Software_Engineer_Project_Assignment.pdf
+.DS_Store
+.env
+/.agents/
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/TestResults/
+**/test-results/
+**/playwright-report/

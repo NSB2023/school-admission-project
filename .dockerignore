@@ -1,0 +1,9 @@
+.git
+.agents
+*.pdf
+**/bin
+**/obj
+**/node_modules
+**/dist
+**/TestResults
+**/test-results

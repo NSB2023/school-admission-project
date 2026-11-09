@@ -1,0 +1,43 @@
+name: Verify admission system
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and start the complete Docker application
+        run: docker compose up --build --wait
+      - name: PostgreSQL integration tests and coverage
+        run: docker compose --profile test run --build --rm backend-tests --collect:"XPlat Code Coverage" --results-directory /results
+      - name: Enforce 80 percent application line and branch coverage
+        run: |
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          report = next(Path('backend/TestResults').rglob('coverage.cobertura.xml'))
+          root = ET.parse(report).getroot()
+          for metric in ('line-rate', 'branch-rate'):
+              actual = float(root.attrib[metric])
+              print(f'{metric}: {actual:.2%}')
+              assert actual >= 0.80, f'{metric} is below 80%'
+          PY
+      - name: Browser acceptance tests
+        run: docker compose --profile test run --build --rm frontend-tests
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/TestResults
+          if-no-files-found: ignore
+      - name: Show container logs on failure
+        if: failure()
+        run: docker compose logs --no-color
+      - name: Stop test containers
+        if: always()
+        run: docker compose --profile test down -v

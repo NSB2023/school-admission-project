@@ -1,0 +1,162 @@
+import { test, expect } from "@playwright/test";
+
+const studentId = "20152691234567890";
+const backendUrl = process.env.API_URL || "http://localhost:8080";
+
+test.beforeEach(async ({ page }) => {
+  if (process.env.API_URL) {
+    await page.route("**/config.js", (route) =>
+      route.fulfill({
+        contentType: "application/javascript",
+        body: `window.__CONFIG__ = ${JSON.stringify({ apiUrl: backendUrl })};`,
+      }),
+    );
+  }
+});
+
+test("create a class, apply, pay, and restore applications after reopening", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Create class", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Create a class" });
+  const name = `Class 6 – Morning ${Date.now()}`;
+  await dialog.getByLabel("Class name").fill(name);
+  await dialog.getByLabel("Total seats").fill("5");
+  await dialog
+    .getByRole("button", { name: "Create class", exact: true })
+    .click();
+  await expect(dialog).not.toBeVisible();
+  await page.getByLabel("Birth registration number").fill(studentId);
+  const card = page.getByRole("article", { name });
+  await card.getByRole("button", { name: "Apply now" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Your seat is reserved" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Pay admission fee" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Admission confirmed" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Close dialog" }).click();
+  await page
+    .getByRole("button", { name: /My applications/ })
+    .first()
+    .click();
+  await expect(
+    page.getByRole("article", { name }).getByText("Confirmed", { exact: true }),
+  ).toBeVisible();
+  await page.reload();
+  await expect(page.getByLabel("Birth registration number")).toHaveValue(
+    studentId,
+  );
+  await page
+    .getByRole("button", { name: /My applications/ })
+    .first()
+    .click();
+  await expect(page.getByRole("article", { name })).toBeVisible();
+});
+
+test("cancel a reservation and release its seat", async ({ page, request }) => {
+  const name = `Class 7 – Day ${Date.now()}`;
+  const created = await request.post(`${backendUrl}/classes`, {
+    data: { name, totalSeats: 1 },
+  });
+  expect(created.status()).toBe(201);
+  await page.goto("/");
+  await page.getByLabel("Birth registration number").fill(studentId);
+  const card = page.getByRole("article", { name });
+  await card.getByRole("button", { name: "Apply now" }).click();
+  await page.getByRole("button", { name: "Cancel reservation" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Your seat is reserved" }),
+  ).not.toBeVisible();
+  await expect(
+    card.getByText("1 seat available", { exact: true }),
+  ).toBeVisible();
+});
+
+test("invalid identity is explained before a request is sent", async ({
+  page,
+  request,
+}) => {
+  const name = `Class 8 – Morning ${Date.now()}`;
+  await request.post(`${backendUrl}/classes`, {
+    data: { name, totalSeats: 2 },
+  });
+  await page.goto("/");
+  await page.getByLabel("Birth registration number").fill("123");
+  await page
+    .getByRole("article", { name })
+    .getByRole("button", { name: "Apply now" })
+    .click();
+  await expect(page.getByRole("alert")).toContainText("17-digit");
+});
+
+test("network failures show a useful recovery action", async ({ page }) => {
+  await page.route("**/classes", (route) => route.abort());
+  await page.goto("/");
+  await expect(page.getByRole("alert")).toContainText("connect");
+  await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+});
+
+test("mobile layout stays inside the viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", { name: "A bright future starts here." }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+});
+
+test("expired reservations update and stop payment without a reload", async ({
+  page,
+}) => {
+  let hold: Record<string, unknown> | null = null;
+  await page.route("**/classes", (route) =>
+    route.fulfill({
+      json: [
+        {
+          id: "expiry-class",
+          name: "Class 9 – Morning Shift",
+          totalSeats: 1,
+          heldSeats: 0,
+          confirmedSeats: 0,
+          availableSeats: 1,
+        },
+      ],
+    }),
+  );
+  await page.route("**/me/holds", (route) =>
+    route.fulfill({ json: hold ? [hold] : [] }),
+  );
+  await page.route("**/classes/expiry-class/holds", (route) => {
+    hold = {
+      holdId: "expiry-hold",
+      classId: "expiry-class",
+      className: "Class 9 – Morning Shift",
+      studentId,
+      status: "HELD",
+      expiresAt: new Date(Date.now() + 2000).toISOString(),
+    };
+    return route.fulfill({ status: 201, json: hold });
+  });
+  await page.goto("/");
+  await page.getByLabel("Birth registration number").fill(studentId);
+  await page
+    .getByRole("article", { name: "Class 9 – Morning Shift" })
+    .getByRole("button", { name: "Apply now" })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Pay admission fee" }),
+  ).toBeEnabled();
+  await expect(
+    page.getByRole("dialog", { name: "This reservation has expired" }),
+  ).toBeVisible({ timeout: 6000 });
+  await expect(
+    page.getByRole("button", { name: "Pay admission fee" }),
+  ).toHaveCount(0);
+});

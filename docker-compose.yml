@@ -1,0 +1,84 @@
+services:
+  database:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: admission
+      POSTGRES_USER: admission
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admission-local}
+    volumes:
+      - admission-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admission -d admission"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+  backend:
+    build: ./backend
+    ports: ["8080:8080"]
+    environment:
+      ConnectionStrings__Database: "${DATABASE_CONNECTION_STRING:-Host=database;Database=admission;Username=admission;Password=${POSTGRES_PASSWORD:-admission-local}}"
+      HOLD_DURATION_SECONDS: ${HOLD_DURATION_SECONDS:-600}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3000}
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080'"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+  frontend:
+    build: ./frontend
+    ports: ["3000:80"]
+    environment:
+      BACKEND_URL: ${BACKEND_URL:-http://localhost:8080}
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  frontend-tests:
+    profiles: [test]
+    build:
+      context: ./frontend
+      target: browser-tests
+    environment:
+      CI: "1"
+      APP_URL: http://frontend
+      API_URL: http://backend:8080
+    depends_on:
+      frontend:
+        condition: service_healthy
+    ipc: host
+  test-database:
+    image: postgres:17-alpine
+    profiles: [test]
+    environment:
+      POSTGRES_DB: admission_tests
+      POSTGRES_USER: admission
+      POSTGRES_PASSWORD: admission-test
+    tmpfs: [/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admission -d admission_tests"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+  backend-tests:
+    profiles: [test]
+    build:
+      context: ./backend
+      target: tests
+    environment:
+      ConnectionStrings__Database: Host=test-database;Database=admission_tests;Username=admission;Password=admission-test
+      HOLD_DURATION_SECONDS: 600
+    depends_on:
+      test-database:
+        condition: service_healthy
+    volumes:
+      - ./backend/TestResults:/results
+volumes:
+  admission-data:
