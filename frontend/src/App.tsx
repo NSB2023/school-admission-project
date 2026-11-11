@@ -24,6 +24,18 @@ import LandingHero from "./LandingHero";
 import PaperPlane from "./PaperPlane";
 import "./styles.css";
 
+const preview = import.meta.env.VITE_PREVIEW_MODE === "true";
+const previewClasses: SchoolClass[] = [6, 7, 8].flatMap((grade) =>
+  ["Morning", "Day"].map((shift) => ({
+    id: `preview-${grade}-${shift}`,
+    name: `Class ${grade} – ${shift} Shift`,
+    totalSeats: 60,
+    heldSeats: 0,
+    confirmedSeats: 0,
+    availableSeats: 60,
+  })),
+);
+
 function storedIdentity() {
   try {
     return localStorage.getItem("schoolgate.student") || "";
@@ -91,8 +103,12 @@ function Dialog({
 }
 
 export default function App() {
-  const [student, setStudent] = useState(storedIdentity);
-  const [classes, setClasses] = useState<SchoolClass[]>([]);
+  const [student, setStudent] = useState(() =>
+    preview ? "" : storedIdentity(),
+  );
+  const [classes, setClasses] = useState<SchoolClass[]>(
+    preview ? previewClasses : [],
+  );
   const [holds, setHolds] = useState<Hold[]>([]);
   const [view, setView] = useState<"classes" | "applications">("classes");
   const [modal, setModal] = useState<"create" | "guide" | null>(null);
@@ -118,6 +134,10 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (preview) {
+      setLoading(false);
+      return;
+    }
     const controller = new AbortController();
     let timer: ReturnType<typeof setTimeout>;
     async function load() {
@@ -318,6 +338,7 @@ export default function App() {
             <span className="year-chip">ADMISSIONS {year}</span>
             <button
               className="button button-small button-outline"
+              disabled={preview}
               onClick={() => {
                 setError(null);
                 setModal("create");
@@ -337,6 +358,24 @@ export default function App() {
             onExplore={() => showList("classes")}
           />
           <div className="enrollment-shell">
+            {preview && (
+              <div className="notice-banner" role="note">
+                <CircleHelp size={19} />
+                <div>
+                  Portfolio preview · These are sample classes. Admission
+                  actions are disabled. Run the full application with Docker
+                  from{" "}
+                  <a
+                    href="https://github.com/NSB2023/school-admission-project"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    GitHub
+                  </a>
+                  .
+                </div>
+              </div>
+            )}
             <div className="enrollment-intro">
               <span>THE FIRST STEP IS YOURS.</span>
               <span>{year} / SCHOOL ADMISSIONS</span>
@@ -369,7 +408,7 @@ export default function App() {
                     maxLength={17}
                     placeholder="Your 17-digit registration number"
                     aria-describedby="identity-hint"
-                    disabled={!!pending}
+                    disabled={preview || !!pending}
                   />
                   {valid ? (
                     <CheckCircle2 size={17} />
@@ -380,7 +419,9 @@ export default function App() {
                 <span id="identity-hint">
                   {valid
                     ? "Student selected · number saved on this device"
-                    : "17 digits · no login needed"}
+                    : preview
+                      ? "Available in the full Docker application"
+                      : "17 digits · no login needed"}
                 </span>
               </div>
             </section>
@@ -428,16 +469,16 @@ export default function App() {
                     {loading ? "—" : String(classes.length).padStart(2, "0")}
                   </strong>
                 </div>
-                <span className="stat-note">Each shift is a separate class</span>
+                <span className="stat-note">
+                  Each shift is a separate class
+                </span>
               </div>
               <div className="stat">
                 <span className="stat-icon">
                   <Users size={23} />
                 </span>
                 <div>
-                  <span className="stat-label accent">
-                    Available seats
-                  </span>
+                  <span className="stat-label accent">Available seats</span>
                   <strong>
                     {loading ? "—" : totals.available}
                     <small> / {totals.seats}</small>
@@ -445,7 +486,7 @@ export default function App() {
                 </div>
                 <span className="stat-note live">
                   <i />
-                  Live availability
+                  {preview ? "Sample availability" : "Live availability"}
                 </span>
               </div>
               <button
@@ -495,11 +536,13 @@ export default function App() {
                         : "connection-dot"
                     }
                   />
-                  {error?.network
-                    ? "Connection interrupted"
-                    : updated
-                      ? "Updates automatically"
-                      : "Connecting…"}
+                  {preview
+                    ? "Portfolio preview"
+                    : error?.network
+                      ? "Connection interrupted"
+                      : updated
+                        ? "Updates automatically"
+                        : "Connecting…"}
                 </span>
               </div>
               {view === "classes" && (
@@ -555,7 +598,7 @@ export default function App() {
                         key={c.id}
                         c={c}
                         hold={activeHolds.find((h) => h.classId === c.id)}
-                        pending={!!pending}
+                        pending={preview || !!pending}
                         onApply={() => apply(c)}
                         onView={(hold) => setSelectedHold(hold)}
                       />

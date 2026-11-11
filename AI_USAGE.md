@@ -55,6 +55,11 @@ Issues caught and corrected during AI-assisted verification:
   student-number explanation were rewritten in plain language.
 
 Automated results are documented in the README and generated test reports.
+For the portfolio deployment, Codex added an optional frontend-only preview flag
+with static sample classes, disabled admission actions, and a GitHub link. Local
+and public-site Chrome checks verified sample browsing, search/filters, disabled
+controls, and the absence of backend requests. The full Docker flow remains the
+default when the preview flag is unset.
 No claim is made that the candidate has personally reviewed every generated line.
 Before submission, the candidate should review the transaction and expiry logic,
 understand the simplified student identity flow, and ensure this file reflects

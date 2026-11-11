@@ -45,6 +45,21 @@ volume. **`docker compose down -v` intentionally deletes the stored data.**
 
 ## Configuration
 
+### Portfolio preview on Vercel
+
+The frontend-only preview is available at
+**https://schoolgate-admissions.vercel.app**. It uses six clearly labeled sample
+classes and supports browsing, search, and shift controls. Student identity and
+admission actions are disabled; it does not contact a backend or database.
+
+Deploy the `frontend/` directory as a Vite project with `VITE_PREVIEW_MODE=true`
+in the Vercel build environment. The default Docker application does not enable
+this flag and retains the complete admission workflow. To use a real backend in
+a future Vercel deployment, remove the preview flag, set `VITE_API_URL` to its
+public HTTPS address, allow the frontend origin on that API, and redeploy.
+
+### Docker and development settings
+
 Defaults work without an environment file. For overrides, copy `.env.example`
 to `.env` and adjust it before starting Compose.
 
