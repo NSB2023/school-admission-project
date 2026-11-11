@@ -155,6 +155,15 @@ export default function App() {
     };
   }, [student, valid, refresh]);
 
+  function showList(nextView: "classes" | "applications") {
+    setView(nextView);
+    requestAnimationFrame(() => {
+      document
+        .getElementById("list-heading")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
   function changeIdentity(value: string) {
     setStudent(value);
     setHolds([]);
@@ -213,7 +222,7 @@ export default function App() {
         }),
       });
       setModal(null);
-      setView("classes");
+      showList("classes");
       setShift("All shifts");
       setQuery("");
       setNotice("Class created. It is now ready to receive applications.");
@@ -265,7 +274,7 @@ export default function App() {
     <>
       <button
         className={view === "classes" ? "nav-item active" : "nav-item"}
-        onClick={() => setView("classes")}
+        onClick={() => showList("classes")}
       >
         <LayoutGrid size={19} />
         Available classes
@@ -273,7 +282,7 @@ export default function App() {
       </button>
       <button
         className={view === "applications" ? "nav-item active" : "nav-item"}
-        onClick={() => setView("applications")}
+        onClick={() => showList("applications")}
       >
         <FileText size={19} />
         My applications
@@ -325,12 +334,7 @@ export default function App() {
             shift={shift}
             onShift={setShift}
             onGuide={() => setModal("guide")}
-            onExplore={() => {
-              setView("classes");
-              document
-                .getElementById("list-heading")
-                ?.scrollIntoView({ behavior: "smooth", block: "start" });
-            }}
+            onExplore={() => showList("classes")}
           />
           <div className="enrollment-shell">
             <div className="enrollment-intro">
@@ -345,10 +349,11 @@ export default function App() {
                 <Fingerprint size={26} strokeWidth={1.5} />
               </span>
               <div className="identity-copy">
-                <h2 id="identity-heading">Let's make this your journey</h2>
+                <h2 id="identity-heading">Who is applying?</h2>
                 <p>
-                  Enter your birth registration number to apply and find your
-                  applications.
+                  Enter the student's 17-digit birth registration number before
+                  choosing Apply now. My applications shows records for this
+                  number; change it to view another student's applications.
                 </p>
               </div>
               <div className="identity-input">
@@ -374,7 +379,7 @@ export default function App() {
                 </div>
                 <span id="identity-hint">
                   {valid
-                    ? "Ready to apply · saved on this device"
+                    ? "Student selected · number saved on this device"
                     : "17 digits · no login needed"}
                 </span>
               </div>
@@ -418,12 +423,12 @@ export default function App() {
                   <BookOpen size={23} />
                 </span>
                 <div>
-                  <span className="stat-label accent">Ways to begin</span>
+                  <span className="stat-label accent">Classes</span>
                   <strong>
                     {loading ? "—" : String(classes.length).padStart(2, "0")}
                   </strong>
                 </div>
-                <span className="stat-note">Find your fit</span>
+                <span className="stat-note">Each shift is a separate class</span>
               </div>
               <div className="stat">
                 <span className="stat-icon">
@@ -431,7 +436,7 @@ export default function App() {
                 </span>
                 <div>
                   <span className="stat-label accent">
-                    Places for possibility
+                    Available seats
                   </span>
                   <strong>
                     {loading ? "—" : totals.available}
@@ -445,7 +450,7 @@ export default function App() {
               </div>
               <button
                 className="stat stat-link"
-                onClick={() => setView("applications")}
+                onClick={() => showList("applications")}
               >
                 <span className="stat-icon">
                   <FileText size={23} />
@@ -627,7 +632,7 @@ export default function App() {
                   action={
                     <button
                       className="button"
-                      onClick={() => setView("classes")}
+                      onClick={() => showList("classes")}
                     >
                       Explore classes
                       <PaperPlane size={16} />
@@ -826,7 +831,7 @@ export default function App() {
                 className="button full-width"
                 onClick={() => {
                   setSelectedHold(null);
-                  setView(
+                  showList(
                     selectedStatus === "CONFIRMED" ? "applications" : "classes",
                   );
                 }}

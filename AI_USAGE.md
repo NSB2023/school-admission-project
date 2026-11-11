@@ -42,11 +42,20 @@ Issues caught and corrected during AI-assisted verification:
   check did not reject newline characters. An explicit single-line check was
   added before generating the browser's JSON configuration.
 - Docker Desktop could not start because its existing virtual disk reported
-  filesystem errors. Verification used a temporary .NET SDK and isolated native
-  PostgreSQL server instead. Docker data was not reset, and container startup is
-  explicitly reported as unverified rather than passed.
+  filesystem errors. Initial verification used a temporary .NET SDK and isolated
+  native PostgreSQL server. After backing up the disk, an offline repair on a
+  separate copy restored Docker startup. Container builds, browser admission
+  flows, and persistence through Compose down/up were subsequently verified.
+- The Docker browser initially reached an old native development API on port
+  8080, causing a CORS failure. Stopping that conflicting process restored access
+  to the Docker API; the complete browser admission flow then passed.
+- Navigation changed the selected list without scrolling past the large hero.
+  A browser regression reproduced the issue before a shared navigation handler
+  fixed it. The user also identified confusing labels; the class/seat counts and
+  student-number explanation were rewritten in plain language.
 
 Automated results are documented in the README and generated test reports.
 No claim is made that the candidate has personally reviewed every generated line.
 Before submission, the candidate should review the transaction and expiry logic,
-run Docker on a healthy engine, and ensure this file reflects their actual usage.
+understand the simplified student identity flow, and ensure this file reflects
+their actual usage.

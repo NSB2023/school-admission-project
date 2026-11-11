@@ -3,6 +3,27 @@ import { test, expect } from "@playwright/test";
 const studentId = "20152691234567890";
 const backendUrl = process.env.API_URL || "http://localhost:8080";
 
+test("main navigation brings classes and applications into view", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const navigation = page.getByRole("navigation", { name: "Main navigation" });
+  await navigation.getByRole("button", { name: "Available classes" }).click();
+  await expect(
+    page.getByRole("heading", { name: /Find your next classroom/ }),
+  ).toBeInViewport();
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await navigation.getByRole("button", { name: /My applications/ }).click();
+  await expect(
+    page.getByRole("heading", { name: /Your applications/ }),
+  ).toBeInViewport();
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await navigation.getByRole("button", { name: "Available classes" }).click();
+  await expect(
+    page.getByRole("heading", { name: /Find your next classroom/ }),
+  ).toBeInViewport();
+});
+
 test.beforeEach(async ({ page }) => {
   if (process.env.API_URL) {
     await page.route("**/config.js", (route) =>

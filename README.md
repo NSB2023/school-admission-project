@@ -23,12 +23,22 @@ No host .NET SDK, Node, or PostgreSQL installation is required for this path.
 The database schema is initialized on backend startup. A PostgreSQL advisory
 lock serializes schema setup if multiple API instances start together.
 The fresh database starts empty: choose **Create class** in the UI, enter a
-class/shift name and seat count, then use a synthetic 17-digit student number
-such as `20152691234567890` to explore admission. Each shift is a separate class.
+class/shift name and seat count. Each shift is a separate class, such as
+`Class 6 – Morning Shift` and `Class 6 – Day Shift`.
+
+Under **Who is applying?**, enter a synthetic 17-digit birth registration number
+such as `20152691234567890`. This selects the student for subsequent actions;
+entering the number alone does not create an application. Changing the number
+switches whose applications are shown. No sign-in or sign-out is required, and
+the number is not verified against government records. Class creation is the
+school admin's action and does not require a student number.
 
 Select **Apply now**, then **Pay admission fee** before the reservation expires.
 Payment is simulated; no payment details or money are collected. Cancel from
-the reservation dialog, or find applications through **My applications**.
+the reservation dialog, or find the selected student's application history through
+**My applications**. **Available classes** and **My applications** scroll directly
+to their lists. The **Classes** count includes each class/shift entry; **Available
+seats** shows the remaining capacity across all classes, alongside total capacity.
 
 Stop with `docker compose down`. Normal down/up preserves the named PostgreSQL
 volume. **`docker compose down -v` intentionally deletes the stored data.**
@@ -78,8 +88,8 @@ docker compose --profile test run --build --rm frontend-tests
 
 The browser suite verifies create/apply/pay, identity restoration after reload,
 cancellation and capacity release, validation, network errors, mobile layout,
-frontend expiry behavior, the shift-controlled sun/cloud scene, and desktop
-headline placement. The frontend expiry test uses controlled API
+frontend expiry behavior, navigation to both lists, the shift-controlled sun/cloud
+scene, desktop headline placement, and tablet button alignment. The frontend expiry test uses controlled API
 responses; autonomous database expiry is tested against PostgreSQL separately.
 **Browser tests create synthetic classes/applications in the running app's
 database. Use a disposable Compose project for an isolated browser test run:**
@@ -139,14 +149,21 @@ the application build.
 
 ## Verification on this development machine
 
-The native .NET/PostgreSQL integration tests and Chrome browser tests have been
-executed. The production frontend build passes and Compose configuration validates.
-Latest local result: **13 backend tests and 9 browser tests pass**; measured backend
-coverage is **96.4% lines and 94.73% branches**.
-The live API was also restarted and all six preview class records remained;
-production-mode malformed-input JSON and browser-test CORS were checked directly.
-Docker Desktop's existing virtual disk reports filesystem checksum errors and
-its engine does not start; container image builds and the complete Compose
-startup/persistence journey have **not** been verified here. No Docker data was
-reset or removed. The Docker startup check remains a required release check on
-a healthy Docker engine.
+Verified locally as of 11 November 2026:
+
+- **13 backend test cases passed** against native PostgreSQL; measured backend
+  coverage was **96.4% lines and 94.73% branches**.
+- **10 Chrome browser tests passed** against the Docker application, covering the
+  admission flow and UI behavior. Navigation and mobile-layout checks also passed
+  after the subsequent wording update.
+- Production frontend builds and Docker Compose startup passed. PostgreSQL,
+  backend, and frontend containers report healthy.
+- A complete `docker compose down` followed by `docker compose up -d --wait`
+  preserved all existing class and application records. A temporary class with
+  one confirmed admission and one active reservation retained its application
+  states, expiry timestamp, and seat totals. Only those temporary verification
+  records were removed afterward; the database was backed up before the check.
+- Production-mode malformed-input JSON responses and browser CORS were checked.
+
+The optional two-backend-process bonus has not been exercised. PostgreSQL row
+locks provide the coordination, but that deployment scenario remains unverified.
